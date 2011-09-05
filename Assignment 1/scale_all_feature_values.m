@@ -7,7 +7,7 @@ for ifeature=1:nfeatures
     for jpattern=1:npatterns
         rawval=raw_features(jpattern,ifeature);
         %NEXT LINE IS NOT CORRECT--FIX IT
-        feature_scaled_vals(jpattern,ifeature)=rawval;
+        feature_scaled_vals(jpattern,ifeature)=(rawval-minval)/(maxval-minval);
     end %done w/ this feature for all patterns
 end %done w/ all patterns
         
