@@ -10,8 +10,8 @@ clear all %make sure all variables from any previous runs are deleted
 
 %start by loading training data
 
-nclusters=2  %YOU MUST CHOOSE HOW MANY CLUSTERS TO ASSUME--DEFAULT OF 2 IS A POOR CHOICE
-max_passes=2 %set max number of sweeps through pattern reassignments...
+nclusters=10  %YOU MUST CHOOSE HOW MANY CLUSTERS TO ASSUME--DEFAULT OF 2 IS A POOR CHOICE
+max_passes=100 %set max number of sweeps through pattern reassignments...
                           %DEFAULT IS A POOR CHOICE
 
 %read in training data--227 companies from S&P 500 with data from Q1 of
