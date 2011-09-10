@@ -119,13 +119,35 @@ for jclust=1:nclusters
 end
 
 
+temp=input('enter to proceed to stock picking');
 %DO SOMETHING HERE TO DECIDE WHICH VALIDATION COMPANIES TO PICK, USING
 %RESULTS FROM TRAINING-DATA CLUSTERING.
 %COMPUTE THE CORRESPONDING RETURN ON INVESTMENT FOR THESE COMPANIES
 %USING THE CORRESPONDING ATTRIBUTE VALUES
-    
 
+%Calculate mean return on investment of training set.
+training_ROI = mean(attributes)
 
+my_clusters=zeros(nclusters,1);
+
+%Select clusters that outperform mean ROI
+for jclust=1:nclusters
+    if cluster_attributes(jclust)>training_ROI*2
+        my_clusters(jclust)=1;
+    end
+end
+
+%Select patterns from validation set that are in selected clusters
+my_picks=zeros(npatterns,1);
+for ipat=1:npatterns
+    if my_clusters(val_pattern_assignments(ipat))==1
+        my_picks(ipat)=1;
+    end
+end
+
+my_picks = find(my_picks)
+val_ROI = mean(val_attributes)
+my_ROI = mean(val_attributes(my_picks))
 
 
 
