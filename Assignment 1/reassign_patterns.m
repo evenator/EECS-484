@@ -1,9 +1,9 @@
 %reassign_patterns.m  NO CHANGES REQUIRED
 nchanges=0;
 for ipat=1:npatterns
-    ipat %debug echo--report current pattern under consideration
-    attributes(ipat)
-    current_cluster=pattern_assignments(ipat) %and current cluster assignment of this pattern
+    %ipat %debug echo--report current pattern under consideration
+    attributes(ipat);
+    current_cluster=pattern_assignments(ipat); %and current cluster assignment of this pattern
     find_closest_cluster %closest cluster index now in closestClust
     closestClust %echo closest cluster
     %cluster_attributes(closestClust)

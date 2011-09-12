@@ -65,7 +65,7 @@ plot_clusters %visualize the clusters by homogeneity of attributes
 
 %suspend code here, waiting for user input, before proceeding to validation
 %computations
-temp=input('enter to proceed to validation-set evaluation');
+%temp=input('enter to proceed to validation-set evaluation');
 %%%%%%%%%%%%% TEST CLUSTERING W/ VALIDATION DATA%%%%%%%
 
 %read in the validation data--51 companies not included in the previous
@@ -119,7 +119,7 @@ for jclust=1:nclusters
 end
 
 
-temp=input('enter to proceed to stock picking');
+%temp=input('enter to proceed to stock picking');
 %DO SOMETHING HERE TO DECIDE WHICH VALIDATION COMPANIES TO PICK, USING
 %RESULTS FROM TRAINING-DATA CLUSTERING.
 %COMPUTE THE CORRESPONDING RETURN ON INVESTMENT FOR THESE COMPANIES
