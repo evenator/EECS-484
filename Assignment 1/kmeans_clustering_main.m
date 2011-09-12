@@ -10,7 +10,7 @@ clear all %make sure all variables from any previous runs are deleted
 
 %start by loading training data
 
-important_features = [15,16,18,19];
+important_features = [15,16,18,19,20,22];
 
 nclusters=32  %YOU MUST CHOOSE HOW MANY CLUSTERS TO ASSUME--DEFAULT OF 2 IS A POOR CHOICE
 max_passes=50 %set max number of sweeps through pattern reassignments...
@@ -151,9 +151,10 @@ my_picks = find(my_picks)
 val_ROI = mean(val_attributes)
 my_ROI = mean(val_attributes(my_picks))
 
-
-
-
+[data,junk,junk] =  xlsread('results.xls');
+[xls_rows, junk] = size(data);
+output= {num_passes, length(my_picks),my_ROI};
+xlswrite('results.xls',output,1,sprintf('A%u',xls_rows+1));
 
 
 
