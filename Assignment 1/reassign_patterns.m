@@ -5,7 +5,7 @@ for ipat=1:npatterns
     attributes(ipat);
     current_cluster=pattern_assignments(ipat); %and current cluster assignment of this pattern
     find_closest_cluster %closest cluster index now in closestClust
-    closestClust %echo closest cluster
+    %closestClust %echo closest cluster
     %cluster_attributes(closestClust)
     %pattern_assignments
     if (current_cluster ~=closestClust)
