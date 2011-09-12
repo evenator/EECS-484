@@ -154,7 +154,7 @@ my_ROI = mean(val_attributes(my_picks))
 [data,junk,junk] =  xlsread('results.xls');
 [xls_rows, junk] = size(data);
 output= {num_passes, length(my_picks),my_ROI};
-xlswrite('results.xls',output,1,sprintf('A%u',xls_rows+1));
+xlswrite('results.xls',output,1,sprintf('A%u',xls_rows+2));
 
 
 
