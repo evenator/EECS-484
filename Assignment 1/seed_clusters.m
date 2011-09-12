@@ -32,7 +32,7 @@ cluster_attributes
 cluster_centroids
 %suspend execution here until user presses "enter"
 pat_list
-dummy=input ('done seeding; enter <CR> to continue');
+%dummy=input ('done seeding; enter <CR> to continue');
         
    
 

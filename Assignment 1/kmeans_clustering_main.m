@@ -10,7 +10,9 @@ clear all %make sure all variables from any previous runs are deleted
 
 %start by loading training data
 
-nclusters=10  %YOU MUST CHOOSE HOW MANY CLUSTERS TO ASSUME--DEFAULT OF 2 IS A POOR CHOICE
+important_features = [15,16,18,19];
+
+nclusters=32  %YOU MUST CHOOSE HOW MANY CLUSTERS TO ASSUME--DEFAULT OF 2 IS A POOR CHOICE
 max_passes=50 %set max number of sweeps through pattern reassignments...
                           %DEFAULT IS A POOR CHOICE
 
@@ -22,7 +24,7 @@ training_data = xlsread('SP_training_data_Q1_w_dpriceQ2.csv');
 %use features from Q1 to try to predict stock-price change from Q1 to Q2
 
 %normalized features are in cols 15 to 22
-raw_features=training_data(:,15:22);
+raw_features=training_data(:,important_features);
 attributes=training_data(:,23); % percent increase (decrease) in stock price is in col 23
 
 temp = size(raw_features); %examine number of patterns and number of features
@@ -71,7 +73,7 @@ plot_clusters %visualize the clusters by homogeneity of attributes
 %read in the validation data--51 companies not included in the previous
 %clustering
 validation_data=xlsread('SP_validation_data_Q1_w_dpriceQ2.csv');
-raw_features=validation_data(:,15:22); %overwrites training-data raw features
+raw_features=validation_data(:,important_features); %overwrites training-data raw features
 val_attributes=validation_data(:,23); % percent increase (decrease) in stock price for validation data;
 % note--DO NOT USE this data for stock picks (that would be cheating).
 % Rather, use this data to score how well (or how poorly) the clustering
@@ -83,7 +85,7 @@ val_attributes=validation_data(:,23); % percent increase (decrease) in stock pri
 index_return_avg = mean(val_attributes)
 
 temp = size(raw_features); %examine number of patterns and number of features in validation set
-npatterns = temp(1) %number of rows is number of patterns in validation set
+npatterns = temp(1); %number of rows is number of patterns in validation set
 %nfeatures = temp(2) %number of feature values--had better be same as
 %training set!
 %repeat many of the steps above used for initial clustering
@@ -130,9 +132,9 @@ training_ROI = mean(attributes)
 
 my_clusters=zeros(nclusters,1);
 
-%Select clusters that outperform mean ROI
+%Select clusters that outperform mean ROI with a population greater than 5
 for jclust=1:nclusters
-    if cluster_attributes(jclust)>training_ROI*2
+    if cluster_attributes(jclust)>training_ROI*2 && cluster_populations(jclust)>5
         my_clusters(jclust)=1;
     end
 end
