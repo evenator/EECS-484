@@ -25,7 +25,6 @@ vecdim=nrows*ncols; %image represented as a vector has this many elements
 %coherence mapping
 nclustrows=6; % specify cluster grid dimensions
 nclustcols=6; %
-clusters=zeros(nclustrows,nclustcols,vecdim);
 %seed all clusters with random values, then normalize resulting cluster
 %feature vecs
 clusters = random('unid',100,[nclustrows,nclustcols,vecdim]);
@@ -73,10 +72,11 @@ while (1>0)  %set as infinite loop (and halt w/ control-C); or,  put cap on "tim
     %update the identified cluster and its neighbors:
     for i=1:nclustrows
         for j=1:nclustcols
-            [alpha,radius]=alphafnc(i,j,ictr,jctr,time);
-                %EDIT HERE--INSERT METHOD TO AFFECT EACH CLUSTER VECTOR
-                %WITH INFLUENCE OF VECTOR "TESTVEC", MODULATED W/ COEF
-                %ALPHA
+            [alpha,radius] = alphafnc(i,j,ictr,jctr,time);
+            testvecsize = size(testvec)
+            clustervecsize = size(squeeze(clusters(i,j,:)))
+            clusters(i,j,:) = squeeze(clusters(i,j,:)) + alpha * testvec'
+            clusters(i,j,:)=clusters(i,j,:)./norm(squeeze(clusters(i,j,:)));
         end
     end
     %review results after each 1000 pattern updates
