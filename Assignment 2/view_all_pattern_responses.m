@@ -12,7 +12,7 @@ response_pat=zeros(gridrows,gridcols); %build grid response to input pattern
 for i=1:gridrows
     for j=1:gridcols
         featurevec=squeeze(clusters(i,j,:)); %get similarity to each cluster feature vec
-        response_pat(i,j)=stimvec*featurevec; %similiarity is dot product
+        response_pat(i,j)=calc_sim(stimvec,featurevec); %similiarity is dot product
     end
 end
 figure(1)
