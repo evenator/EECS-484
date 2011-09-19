@@ -2,11 +2,17 @@
 function [alpha,radius]=alphafnc(i,j,ictr,jctr,time)
 %compute distance of cluster at i,j from "central" cluster located at
 %ictr,jctr
-radius = pdist([i, j; ictr, jctr], 'euclidean'); %uses Euclidean dist
+dist = pdist([i, j; ictr, jctr], 'euclidean'); %uses Euclidean dist
+
+%Influence radius
+radius = radius_init / time;
 
 %alpha decays linearly w/ radius
 alpha_init = .1;
-alpha = alpha_init / radius;
-alpha = alpha / time;
+if dist > radius
+    alpha = 0;
+else
+    alpha = alpha_init * (dist-radius)/radius;
+end
 %return value of alpha=influence coefficient of current pattern vector on
 %cluster at location i,j.  Also return the influence radius, "radius"
