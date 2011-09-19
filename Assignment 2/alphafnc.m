@@ -5,6 +5,7 @@ function [alpha,radius]=alphafnc(i,j,ictr,jctr,time)
 dist = pdist([i, j; ictr, jctr], 'euclidean'); %uses Euclidean dist
 
 %Influence radius
+radius_init = 6;
 radius = radius_init / time;
 
 %alpha decays linearly w/ radius
