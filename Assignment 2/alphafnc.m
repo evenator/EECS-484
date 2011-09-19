@@ -6,14 +6,11 @@ dist = pdist([i, j; ictr, jctr], 'euclidean'); %uses Euclidean dist
 
 %Influence radius
 radius_init = 6;
-radius = radius_init - (radius_init * time/10000);
+radius = radius_init* (1-time/100000);% * 1/(1+exp(time-1000));
 
 %alpha decays linearly w/ radius
 alpha_init = .1;
-if dist > radius
-    alpha = 0;
-else
-    alpha = alpha_init * (radius-dist)/radius;
-end
+alpha = alpha_init * 1/(1+exp(dist-radius));
+
 %return value of alpha=influence coefficient of current pattern vector on
 %cluster at location i,j.  Also return the influence radius, "radius"
