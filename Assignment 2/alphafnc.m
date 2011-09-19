@@ -6,7 +6,7 @@ dist = pdist([i, j; ictr, jctr], 'euclidean'); %uses Euclidean dist
 
 %Influence radius
 radius_init = 6;
-radius = radius_init / time;
+radius = radius_init - (radius_init * time/10000);
 
 %alpha decays linearly w/ radius
 alpha_init = .1;

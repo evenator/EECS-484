@@ -60,7 +60,7 @@ eval_test_patterns; %script to view decoding of 3 test patterns, I, H and X
 time=0;
 display_counter=0;
 while (1>0)  %set as infinite loop (and halt w/ control-C); or,  put cap on "time" for max iterations
-    time=time+1
+    time=time+1;
     display_counter=display_counter+1;
     ipat=ceil(rand*npats); %pick a pattern at random
     testvec= squeeze(scrambled_vecs(ipat,:)); %extract the corresponding row vector
@@ -73,9 +73,9 @@ while (1>0)  %set as infinite loop (and halt w/ control-C); or,  put cap on "tim
     for i=1:nclustrows
         for j=1:nclustcols
             [alpha,radius] = alphafnc(i,j,ictr,jctr,time);
-            testvecsize = size(testvec)
-            clustervecsize = size(squeeze(clusters(i,j,:)))
-            clusters(i,j,:) = squeeze(clusters(i,j,:)) + alpha * testvec'
+            testvecsize = size(testvec);
+            clustervecsize = size(squeeze(clusters(i,j,:)));
+            clusters(i,j,:) = squeeze(clusters(i,j,:)) + alpha * testvec';
             clusters(i,j,:)=clusters(i,j,:)./norm(squeeze(clusters(i,j,:)));
         end
     end
