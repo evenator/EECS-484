@@ -28,12 +28,17 @@ nclustcols=6; %
 clusters=zeros(nclustrows,nclustcols,vecdim);
 %seed all clusters with random values, then normalize resulting cluster
 %feature vecs
-%NEED TO SET ALL VALUES OF clusters(i,j,k)
+clusters = random('unid',100,[nclustrows,nclustcols,vecdim]);
 
 %now normalize the feature vecs:
 %note--may extract a vector from a 3-D matrix with:
 %vec=squeeze(clusters(i,j,:))
-%NEED TO NORMALIZE ALL VECTORS clusters(i,j,:)
+for row = 1:nclustrows
+    for col = 1:nclustcols
+        clusters(row,col,:)=clusters(row,col,:)./norm(squeeze(clusters(row,col,:)));
+    end
+end
+return;
 
 %convert all matrix patterns to pattern vectors
 scrambled_vecs = zeros(npats,vecdim); %fill this matrix with vector versions of training patterns
