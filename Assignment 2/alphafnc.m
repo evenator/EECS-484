@@ -13,7 +13,7 @@ alpha_init = .1;
 if dist > radius
     alpha = 0;
 else
-    alpha = alpha_init * (dist-radius)/radius;
+    alpha = alpha_init * (radius-dist)/radius;
 end
 %return value of alpha=influence coefficient of current pattern vector on
 %cluster at location i,j.  Also return the influence radius, "radius"
