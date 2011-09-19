@@ -38,7 +38,6 @@ for row = 1:nclustrows
         clusters(row,col,:)=clusters(row,col,:)./norm(squeeze(clusters(row,col,:)));
     end
 end
-return;
 
 %convert all matrix patterns to pattern vectors
 scrambled_vecs = zeros(npats,vecdim); %fill this matrix with vector versions of training patterns
@@ -92,7 +91,6 @@ while (1>0)  %set as infinite loop (and halt w/ control-C); or,  put cap on "tim
       save('clusters','clusters'); %save cluster results to file clusters.mat
     end
 end
-
 
 
 
