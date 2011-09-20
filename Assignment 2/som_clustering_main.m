@@ -85,7 +85,7 @@ while (time<100000)  %set as infinite loop (and halt w/ control-C); or,  put cap
         [alpha,radius]=alphafnc(4,4,4,4,time) %report alpha and radius at this time
         %are clusters performing decoding?  Check cluster responses to I, H
         %and X scrambled test patterns
-        %view_all_pattern_responses(scrambled_vecs,clusters);
+        view_all_pattern_responses(scrambled_vecs,clusters);
         eval_test_patterns
       display_counter=0;
       save('clusters','clusters'); %save cluster results to file clusters.mat
