@@ -23,8 +23,8 @@ vecdim=nrows*ncols; %image represented as a vector has this many elements
 %e.g., try cluster grid 7x7 or 6x6
 %but 8x8 is also allowed, e.g. to match number of input "fibers" to output "fibers" to discover
 %coherence mapping
-nclustrows=6; % specify cluster grid dimensions
-nclustcols=6; %
+nclustrows=8; % specify cluster grid dimensions
+nclustcols=8; %
 %seed all clusters with random values, then normalize resulting cluster
 %feature vecs
 clusters = random('unid',100,[nclustrows,nclustcols,vecdim]);
@@ -59,7 +59,7 @@ eval_test_patterns; %script to view decoding of 3 test patterns, I, H and X
 
 time=0;
 display_counter=0;
-while (1>0)  %set as infinite loop (and halt w/ control-C); or,  put cap on "time" for max iterations
+while (time<100000)  %set as infinite loop (and halt w/ control-C); or,  put cap on "time" for max iterations
     time=time+1;
     display_counter=display_counter+1;
     ipat=ceil(rand*npats); %pick a pattern at random
@@ -85,7 +85,7 @@ while (1>0)  %set as infinite loop (and halt w/ control-C); or,  put cap on "tim
         [alpha,radius]=alphafnc(4,4,4,4,time) %report alpha and radius at this time
         %are clusters performing decoding?  Check cluster responses to I, H
         %and X scrambled test patterns
-        view_all_pattern_responses(scrambled_vecs,clusters);
+        %view_all_pattern_responses(scrambled_vecs,clusters);
         eval_test_patterns
       display_counter=0;
       save('clusters','clusters'); %save cluster results to file clusters.mat
