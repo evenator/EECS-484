@@ -23,8 +23,8 @@ vecdim=nrows*ncols; %image represented as a vector has this many elements
 %e.g., try cluster grid 7x7 or 6x6
 %but 8x8 is also allowed, e.g. to match number of input "fibers" to output "fibers" to discover
 %coherence mapping
-nclustrows=8; % specify cluster grid dimensions
-nclustcols=8; %
+nclustrows=6; % specify cluster grid dimensions
+nclustcols=6; %
 %seed all clusters with random values, then normalize resulting cluster
 %feature vecs
 clusters = random('unid',100,[nclustrows,nclustcols,vecdim]);
