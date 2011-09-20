@@ -75,7 +75,7 @@ while (time<100000)  %set as infinite loop (and halt w/ control-C); or,  put cap
             [alpha,radius] = alphafnc(i,j,ictr,jctr,time);
             testvecsize = size(testvec);
             clustervecsize = size(squeeze(clusters(i,j,:)));
-            clusters(i,j,:) = squeeze(clusters(i,j,:)) + alpha * testvec';
+            clusters(i,j,:) = squeeze(clusters(i,j,:)) + alpha * (testvec'-squeeze(clusters(i,j,:)));
             clusters(i,j,:)=clusters(i,j,:)./norm(squeeze(clusters(i,j,:)));
         end
     end
