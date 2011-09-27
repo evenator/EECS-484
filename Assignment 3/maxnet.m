@@ -5,16 +5,16 @@
 %activation function is assumed to output zero for any negative input, but
 %is linear (with slope=1) for any non-negative input
 clear all %delete any old variables still hanging around
-figure(1) %clear figure 1 for display
-clf %clear the current figure
 
-eps=-01 %choose mutual inhibition strength
+eps = -0.02 %choose mutual inhibition strength
 node_count = 5 %choose a number of interconnected nodes
 W = eps * ones(node_count, node_count) + (1 - eps) * eye(node_count)
 
 %initialize a set of outputs:
 sigma_vec = rand(node_count,1)
-sigma_history=[sigma_vec];
+[true_max_val, true_max_node] = max(sigma_vec)
+
+sigma_history = [sigma_vec];
 time =0; %create time vector to enable plotting
 time_vec=[time];
 %plot evolution of all outputs up to this point...
@@ -41,6 +41,8 @@ end
 
 time
 sigma_vec
+max_node = find(sigma_vec)
+max_val = sigma_vec(max_node)
  
 %rest of this is just plotting--overwrite the figure to show current status
 hold off %clear the figure
