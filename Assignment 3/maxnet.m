@@ -11,9 +11,9 @@ clf %clear the current figure
 eps=-0.02; %choose mutual inhibition strength
 node_count = 5; %choose a number of interconnected nodes
 W = eps * ones(node_count, node_count) + (1 - eps) * eye(node_count)
-return
+
 %initialize a set of outputs:
-sigma_vec = rand(nnodes,1)
+sigma_vec = rand(node_count,1)
 sigma_history=[sigma_vec];
 time =0; %create time vector to enable plotting
 time_vec=[time];
@@ -21,7 +21,7 @@ time_vec=[time];
 figure(1)
 clf
 hold all %allow adding new data to figure 1
-for i=1:nnodes
+for i=1:node_count
     plot(time,sigma_vec(i))
 end
 
@@ -32,7 +32,7 @@ while 1>0   %infinite loop; requires user to hit ctl-C to break out of loop--els
     net_inputs = W*sigma_vec %make sure you understand what this means and why it is true
 
     %for each neuron, compute firing rate as a function of net voltage at soma
-    for i=1:nnodes
+    for i=1:node_count
         sigma_vec(i)=activation_fnc(net_inputs(i)); %outputs follow from inputs and activation fnc
     end
     sigma_vec %display the output values
@@ -42,7 +42,7 @@ while 1>0   %infinite loop; requires user to hit ctl-C to break out of loop--els
     hold off %clear the figure
     clf
     hold all %allows adding multiple lines to the plot
-    for i=1:nnodes
+    for i=1:node_count
         y_vec=sigma_history(i,:); %strip off i'th row of neural responses (for i'th neuron's responses)
         plot(time_vec,y_vec) %plot this neural response vs time
     end
