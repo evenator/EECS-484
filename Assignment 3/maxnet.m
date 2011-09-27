@@ -2,20 +2,16 @@
 %autapse and every pair of nodes has mutual inhibition of strength eps (<0)
 % start w/ random initialization of the neural outputs, sigma_vec, then
 % simulate the evolution of the network (with implicit time constant = 1)
-%activiation function is assumed to output zero for any negative input, but
+%activation function is assumed to output zero for any negative input, but
 %is linear (with slope=1) for any non-negative input
 clear all %delete any old variables still hanging around
 figure(1) %clear figure 1 for display
 clf %clear the current figure
 
 eps=-0.02; %choose mutual inhibition strength
-nnodes = 5; %choose a number of interconnected nodes
-W=ones(nnodes,nnodes); %need to populate weight matrix--start w/ all ones
-%fix the values of W to be correct, using unity autapses and mutual
-%inhibition of strength eps
-
-W %view the result
-
+node_count = 5; %choose a number of interconnected nodes
+W = eps * ones(node_count, node_count) + (1 - eps) * eye(node_count)
+return
 %initialize a set of outputs:
 sigma_vec = rand(nnodes,1)
 sigma_history=[sigma_vec];
