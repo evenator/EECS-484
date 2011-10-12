@@ -3,7 +3,7 @@ function  [dWkj,dWji] = compute_W_derivs(Wji,Wkj,training_patterns,targets)
 dWji=0*Wji; %sets dimensions of output matrices
 dWkj=0*Wkj;
 
-[P,K] = size(targets) %P training patterns, K-dimensional output
+[P,K] = size(targets); %P training patterns, K-dimensional output
 [J,I] = size(Wji); %J interneurons, I-dimensional input patterns
 
 %loop over all input patterns and compute influence of each pattern on
