@@ -36,7 +36,7 @@ eps=0.95; % tune this value; may also want to vary this during iterations
 iteration=0;
 %BP:
 iter1k=0;
-while (iteration<1000) % infinite loop--ctl-C to stop; edit this to run finite number of times
+while (iteration<5) % infinite loop--ctl-C to stop; edit this to run finite number of times
     %compute all derivatives off error metric w/rt all weights; put these
     %derivatives in matrices dWkj and dWji
     iteration=iteration+1;
@@ -46,10 +46,10 @@ while (iteration<1000) % infinite loop--ctl-C to stop; edit this to run finite n
     %DEBUG: uncomment the following and prove that your compute_W_derivs
     %yields the same answer as numerical estimatesfor dE/dW
     %comment out to run faster, once debugged
-    %dWkj %display derivative computation
-    %est_dWkj= numer_est_Wkj(W1p,W21,training_patterns,targets) %and numerical estimate
-    %dWji %display sensitivities dE/dwji
-    %est_dWji=numer_est_Wji(W1p,W21,training_patterns,targets) %and numerical estimate
+    dWkj %display derivative computation
+    est_dWkj= numer_est_Wkj(W1p,W21,training_patterns,targets) %and numerical estimate
+    dWji %display sensitivities dE/dwji
+    est_dWji=numer_est_Wji(W1p,W21,training_patterns,targets) %and numerical estimate
 
     %use gradient descent to update all weights:
     W1p=W1p-eps*dWji;

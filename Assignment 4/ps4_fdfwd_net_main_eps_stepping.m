@@ -1,5 +1,8 @@
-err_mat = zeros(20,1);
-for num_nodes = 2:20
+step_size = .5;
+n_steps = 20;
+err_mat = zeros(n_steps,3);
+
+for step = 1:n_steps
     %2-layer fdfwd network to be trained w/ custom BP
     %for xor, define 3 inputs, including bias (I=3),  J interneurons (incl bias), and 1 output
     %choose logsig (sigmoid) nonlinear activation fnc
@@ -21,7 +24,7 @@ for num_nodes = 2:20
         t3;
         t4];  % should have these responses; rows correspond to input pattern rows
     ndim_inputs=3; %2D patterns plus bias
-    nnodes_layer1=num_nodes; %try this many interneurons--including bias virtual neuron; experiment with this number
+    nnodes_layer1=5; %try this many interneurons--including bias virtual neuron; experiment with this number
     nnodes_layer2=1; %single output
     %weights from pattern inputs to layer-1 (interneurons)
     %initialize weights to random numbers, plus and minus--may want to change
@@ -34,11 +37,12 @@ for num_nodes = 2:20
     %evaluate networkover a grid of inputs and plot using "surf";
     %works only in special case:  assumes inputs are 2-D and range from 0 to 1
     %ffwd_surfplot(W1p,W21);
-    eps=0.5; % tune this value; may also want to vary this during iterations
+    eps=step_size*step; % tune this value; may also want to vary this during iterations
     iteration=0;
     %BP:
     iter1k=0;
-    while (iteration<10000) % infinite loop--ctl-C to stop; edit this to run finite number of times
+    rmserr=1;
+    while (rmserr >.05) % infinite loop--ctl-C to stop; edit this to run finite number of times
         %compute all derivatives off error metric w/rt all weights; put these
         %derivatives in matrices dWkj and dWji
         iteration=iteration+1;
@@ -65,13 +69,11 @@ for num_nodes = 2:20
             iter1k=iteration;
             iteration;
             %pause(0.5)
-            rmserr = err_eval(W1p,W21,training_patterns,targets);
         end
-        
+        rmserr = err_eval(W1p,W21,training_patterns,targets);
     end
-    figure(num_nodes);
-    err_mat(num_nodes)=rmserr;
+    figure(step);
+    err_mat(step,:)=[eps, rmserr, iteration];
     ffwd_surfplot(W1p,W21); %print out final plot, if loop terminates
     
 end
-err_mat;
