@@ -27,7 +27,7 @@ for p=1:P %make the P loop the outer loop, since need to re-use results of
         dWkj(k,:) = dWkj(k,:) + err_k * gprime_k * outputj';
         % will also need gprime_j in an inner loop for dE/dwji terms
         for j = 1:J %Compute influence w/rt interneuron j
-            gprime_j = outputj(j) *( 1-outputj(j));
+            gprime_j = outputj(j) *( 1-outputj(j)); %slope of activation fnc for neuron j for pattern p
             dWji(j,:) = dWji(j,:) + err_k * gprime_k * gprime_j * Wkj(k, j) * stim_vec';
         end
     end %done w/ loop over all K output neurons
