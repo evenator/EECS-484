@@ -11,7 +11,7 @@ clear;
 load('arm_xy.dat')
 training_patterns = arm_xy(:,1:2);
 [~, input_dim] = size(training_patterns); %Number of input nodes
-targets = arm_xy(:,3:4);
+targets = arm_xy(:,3);
 [~, output_dim] = size(targets); %Number of output nodes
 interneurons = 10; %Number of interneurons
 ranges = range(training_patterns); %Range of input patterns
@@ -51,19 +51,9 @@ simOutputVec = sim(net,evalpats);
 
 %Plot X
 figure(1);
-subplot(1,2,1);
 simXMat = reshape(simOutputVec(1,:), 21, []);
 surf(l1vals, l2vals, simXMat);
 hold on;
 plot3(training_patterns(:,1), training_patterns(:,2), targets(:,1), 'b*');
 hold off;
 title('X Result')
-
-%Plot Y
-subplot(1,2,2);
-simYMat = reshape(simOutputVec(2,:), 21, []);
-surf(l1vals, l2vals, simYMat);
-hold on;
-plot3(training_patterns(:,1), training_patterns(:,2), targets(:,2), 'b*');
-hold off;
-title('Y Result')
