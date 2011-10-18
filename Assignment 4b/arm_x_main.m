@@ -51,6 +51,7 @@ simOutputVec = sim(net,evalpats);
 
 %Plot X
 figure(1);
+clf;
 simXMat = reshape(simOutputVec(1,:), 21, []);
 surf(l1vals, l2vals, simXMat);
 hold on;
