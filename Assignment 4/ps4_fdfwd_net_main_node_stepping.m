@@ -74,4 +74,4 @@ for num_nodes = 2:20
     ffwd_surfplot(W1p,W21); %print out final plot, if loop terminates
     
 end
-err_mat;
+err_mat
