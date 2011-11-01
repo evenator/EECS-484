@@ -44,9 +44,17 @@ W_to_gamma_from_beta = zeros(ngamma,nbeta+1); %need to learn these in the last s
 xtrain=[];
 ytrain=[];
 %choose beta-training points selected at random from training patterns
+pat_list = zeros(nbeta,1);
 for ibeta=1:nbeta
-    p_pick=1; %FIX THIS: PICK A PATTERN INDEX AT RANDOM--BUT DO NOT REPEAT THE SAME 
-      %PATTERN TWICE
+    %Randomly choose a pattern
+    ipat = random('unid',npatterns);
+    %If the pattern is already used, try again
+    while ~isempty(find(pat_list==ipat ))
+        ipat = random('unid',npatterns);
+    end
+    %Add the chosen pattern to the list of chosen patterns
+    p_pick = ipat;
+    
     xval=theta1(p_pick);
     yval=theta2(p_pick);
      xtrain=[xtrain;xval]; %keep a record of the chosen training pattern values
