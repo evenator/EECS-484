@@ -23,13 +23,19 @@ nalpha = 100;  %EXPERIMENT WITH THIS VALUE
 %use tansig() activation function for alpha nodes
 
 %initialize weights from inputs to alpha layer to random values:
+%Use Random values
+Walpha_range = [-1,1;-1,1;-1,1];
 W_to_alpha_from_inputs = zeros(nalpha,ninputs+1); %POOR CHOICE OF WEIGHTS! FIX THIS
+for(i =1:ninputs+1)
+    W_to_alpha_from_inputs(:,i) = random('unif',Walpha_range(i,1),Walpha_range(i,2),1,nalpha);
+end
 
 %beta layer should behave equivalent to radial basis funcs
 %number of beta nodes must be less than number of training patterns
 % use logsig() activation fnc for beta nodes
 
 nbeta=10; %EXPERIMENT WITH THIS
+
 %initialize alpha-to-beta weights all to zero; include room for virtual
 %bias alpha node; train these weights by imprinting
 W_to_beta_from_alpha = zeros(nbeta,nalpha+1); %this is fine to start with
@@ -41,8 +47,8 @@ W_to_gamma_from_beta = zeros(ngamma,nbeta+1); %need to learn these in the last s
 
 %select patterns at random from training set to "imprint" weights into beta
 %nodes.  Number of patterns to choose = number of beta nodes chosen
-xtrain=[];
-ytrain=[];
+xtrain=zeros(nbeta,1);
+ytrain=zeros(nbeta,1);
 %choose beta-training points selected at random from training patterns
 pat_list = zeros(nbeta,1);
 for ibeta=1:nbeta
@@ -52,21 +58,22 @@ for ibeta=1:nbeta
     while ~isempty(find(pat_list==ipat ))
         ipat = random('unid',npatterns);
     end
+    
     %Add the chosen pattern to the list of chosen patterns
     p_pick = ipat;
     
-    xval=theta1(p_pick);
-    yval=theta2(p_pick);
-     xtrain=[xtrain;xval]; %keep a record of the chosen training pattern values
-     ytrain=[ytrain;yval];
-     stim = [1;xval;yval]; %stimulate network at this set of inputs, including bias
-        u_alphas = W_to_alpha_from_inputs*stim; %vector of alpha-node inputs
-        sig_alpha=tansig(u_alphas); %outputs of alpha layer--not including bias node
+    xval = theta1(p_pick);
+    yval = theta2(p_pick);
+    xtrain(ibeta) = xval; %keep a record of the chosen training pattern values
+    ytrain(ibeta) = yval;
+    stim = [1;xval;yval]; %stimulate network at this set of inputs, including bias
+    u_alphas = W_to_alpha_from_inputs*stim; %vector of alpha-node inputs
+    sig_alpha = tansig(u_alphas); %outputs of alpha layer--not including bias node
 
-        %on the basis of the alpha-node responses, choose how to select
-        %weights leading into the ibeta'th beta node
-       wvec = zeros(nalpha+1,1); %NOT A GOOD CHOICE OF WTS; FIX THIS
-       W_to_beta_from_alpha(ibeta,:)=wvec'; %install these weights leading into beta node  ibeta 
+    %on the basis of the alpha-node responses, choose how to select
+    %weights leading into the ibeta'th beta node
+    wvec = [sign(sig_alpha); -nalpha + .5]; %FTFY
+    W_to_beta_from_alpha(ibeta,:) = wvec'; %install these weights leading into beta node  ibeta 
 end
 
 %debug--look response of each beta node over range of stimuli
@@ -74,24 +81,25 @@ end
 %your choices in the preceding loop.  Choice of bias term is also crucial.
 %comment out this debug code after confirming proper beta-node responses
 figure(2)
+clf;
 for ibeta=1:nbeta
     ibeta
+    subplot(4,4,ibeta);
     ffwd_beta_surfplot(W_to_alpha_from_inputs,W_to_beta_from_alpha,ibeta)
     title('trained beta node response')
-    pause
 end
 
 %now utilize all training data...
 %compute outputs of alpha layer:
 %u_alphas has nalpha rows (one for each node) and npatterns columns 
 u_alphas = W_to_alpha_from_inputs*[bias_inputs';theta1';theta2'];
-sig_alphas=tansig(u_alphas);
-sig_alphas=[ones(1,npatterns );sig_alphas]; %insert virtual bias nodes in first row
+sig_alphas = tansig(u_alphas);
+sig_alphas = [ones(1,npatterns );sig_alphas]; %insert virtual bias nodes in first row
        
 %compute beta-node responses to all stimuli:
 %beta-layer sigmas are in columns, one column per stimulus pattern
 u_betas = W_to_beta_from_alpha*sig_alphas;
-sig_betas=logsig(u_betas);
+sig_betas = logsig(u_betas);
 %sig_betas is nbeta rows of npat cols
 %expand sig_betas to add a virtual extra node for bias:
 sig_betas = [ones(1,npatterns);sig_betas]; %virtual beta node output = 1 for every stim
@@ -133,31 +141,30 @@ sig_betas = [ones(1,nbeta);sig_betas]; %virtual beta node output = 1 for every s
 z_train=w_vec*sig_betas;
 
 %sample the network response for uniform scan over rectangular range:
-xpts=[];
-ypts=[];
-zpts=[];
+imax = 11;
+jmax = 11;
+xpts=zeros(imax*jmax);
+ypts=zeros(imax*jmax);
+zpts=zeros(imax*jmax);
 xvals=[0:0.1:1]*0.1 +0.157; %choose to sample over a rectangular domain
 yvals=[0:0.1:1]*0.16 +0.22;
 Z=zeros(11,11); %holder for 11x11 grid of outputsn
 nsamps=0;
-for (i=1:11)
-    for(j=1:11)
+for (i=1:imax)
+    for(j=1:jmax)
         nsamps=nsamps+1;
         xpt=xvals(i);
         ypt=yvals(j);
-        xpts=[xpts;xpt];
-        ypts=[ypts;ypt];
-         stim = [1;xpt;ypt]; %stimulate network at this set of inputs, including bias
-         u_alphas = W_to_alpha_from_inputs*[1;xpt;ypt];
-         sig_alphas=tansig(u_alphas); %outputs of alpha layer
-         sig_alphas=[1;sig_alphas];
-         u_betas = W_to_beta_from_alpha*sig_alphas;
-         sig_betas=logsig(u_betas); %outputs of beta nodes
-         %add extra virtual beta node = bias...
-         sig_betas=[1;sig_betas];
-         gamma = w_vec*sig_betas;
-         Z(j,i)= gamma;  %note: surf() demands swap indices!
-         zpts=[zpts;gamma];
+        xpts((i-1)*jmax+j) = xpt;
+        ypts((i-1)*jmax+j) = ypt;
+        stim = [1;xpt;ypt]; %stimulate network at this set of inputs, including bias
+        u_alphas = W_to_alpha_from_inputs*[1;xpt;ypt];
+        sig_alphas = [1; tansig(u_alphas)]; %outputs of alpha layer
+        u_betas = W_to_beta_from_alpha*sig_alphas;
+        sig_betas = [1;logsig(u_betas)]; %outputs of beta nodes
+        gamma = w_vec*sig_betas;
+        Z(j,i)= gamma;  %note: surf() demands swap indices!
+        zpts((i-1)*jmax+j)=gamma;
     end
 end
 
