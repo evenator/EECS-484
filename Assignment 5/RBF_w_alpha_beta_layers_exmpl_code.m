@@ -28,8 +28,8 @@ figure(1)
 plot3(theta1,theta2,target_vals,'*') %take a look at the training data
 title('display of training data')
 
-[theta1_scaled, theta1_min, theta1_max] = scale_inputs(theta1);
-[theta2_scaled, theta2_min, theta2_max] = scale_inputs(theta2);
+[theta1, theta1_min, theta1_max] = scale_inputs(theta1);
+[theta2, theta2_min, theta2_max] = scale_inputs(theta2);
 
 ninputs=2; %theta1 and theta2, also weights from bias
 
@@ -42,7 +42,7 @@ W_to_alpha_from_inputs(:,2:(ninputs+1)) = random('unif',-1,1,nalpha,ninputs);
 
 for(j = 1:nalpha)
     bound = sum(abs(W_to_alpha_from_inputs(j,2:ninputs+1)));
-    W_to_alpha_from_inputs(j,1) = random('unif',-bound,bound); %THIS NEEDS NORMALIZED!
+    W_to_alpha_from_inputs(j,1) = random('unif',-bound,bound);
 end
 
 %Plot out alpha layer
@@ -52,7 +52,7 @@ hold on
 for j = 1:nalpha
     plot_perceptron(W_to_alpha_from_inputs(j,:));
 end
-plot(theta1_scaled, theta2_scaled, 'r*');
+plot(theta1, theta2, 'r*');
 axis([-1 1 -1 1])
 hold off
 
@@ -82,8 +82,8 @@ for ibeta=1:nbeta
     %Add the chosen pattern to the list of chosen patterns
     p_pick = ipat;
     
-    xval = theta1_scaled(p_pick)
-    yval = theta2_scaled(p_pick)
+    xval = theta1(p_pick)
+    yval = theta2(p_pick)
     xtrain(ibeta) = xval; %keep a record of the chosen training pattern values
     ytrain(ibeta) = yval;
     stim = [1;xval;yval]; %stimulate network at this set of inputs, including bias
@@ -109,13 +109,12 @@ for ibeta=1:nbeta
     ffwd_beta_surfplot(W_to_alpha_from_inputs,W_to_beta_from_alpha,ibeta)
     title('trained beta node response')
 end
-break;
 
 
 %now utilize all training data...
 %compute outputs of alpha layer:
 %u_alphas has nalpha rows (one for each node) and npatterns columns 
-u_alphas = W_to_alpha_from_inputs*[bias_inputs';theta1_scaled';theta2_scaled'];
+u_alphas = W_to_alpha_from_inputs*[bias_inputs';theta1';theta2'];
 sig_alphas = tansig(u_alphas);
 sig_alphas = [ones(1,npatterns );sig_alphas]; %insert virtual bias nodes in first row
        
@@ -164,8 +163,8 @@ sig_betas = [ones(1,nbeta);sig_betas]; %virtual beta node output = 1 for every s
 z_train=w_vec*sig_betas;
 
 %sample the network response for uniform scan over rectangular range:
-xvals=[0:0.1:1]*0.1 +0.157; %choose to sample over a rectangular domain
-yvals=[0:0.1:1]*0.16 +0.22;
+xvals=[0:0.1:1]*range(theta1) + min(theta1); %choose to sample over a rectangular domain
+yvals=[0:0.1:1]*range(theta2) + min(theta2);
 imax = length(xvals);
 jmax = length(yvals);
 xpts=zeros(imax*jmax);
@@ -205,6 +204,7 @@ title('sample points and simulated function (surface)')
 hold on;
 surf(xvals,yvals,Z)
 hold off;
+axis([theta1_min-1, theta1_max+1, theta2_min-1, theta2_max+1, min(target_vals)-1, max(target_vals)+1])
 
 %THIS CONCLUDES ALGEBRAIC APPROACH AND EVALUATION
 %IMPLEMENT ALTERNATIVE SEARCH METHOD FOR W_to_beta_from_alpha
