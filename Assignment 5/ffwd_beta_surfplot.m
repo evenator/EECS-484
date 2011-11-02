@@ -8,8 +8,7 @@ imax = length(xvals);
 jmax = length(yvals);
 Zu=zeros(imax,jmax);
 Zsig=zeros(imax,jmax);
-W1p
-W21
+
 for i=1:imax
     for j=1:jmax
         stim = [1;xvals(i);yvals(j)]; %stimulate network at this set of inputs, including bias

@@ -16,10 +16,11 @@ bias_inputs = ones(npatterns,1); %fake input node for bias--always outputs 1 for
 %TUNING PARAMETERS
 
 %use this many alpha-layer perceptrons 
-nalpha = 400;  %EXPERIMENT WITH THIS VALUE
+nalpha = 1000;  %EXPERIMENT WITH THIS VALUE
 %number of beta nodes must be less than number of training patterns
-nbeta=10; %EXPERIMENT WITH THIS
-
+nbeta=20; %EXPERIMENT WITH THIS
+bias_gain = .5
+bias_eps = 1;
 %END TUNING PARAMETERS
 
 
@@ -52,6 +53,7 @@ for j = 1:nalpha
     plot_perceptron(W_to_alpha_from_inputs(j,:));
 end
 plot(theta1_scaled, theta2_scaled, 'r*');
+axis([-1 1 -1 1])
 hold off
 
 %initialize alpha-to-beta weights all to zero; include room for virtual
@@ -80,8 +82,8 @@ for ibeta=1:nbeta
     %Add the chosen pattern to the list of chosen patterns
     p_pick = ipat;
     
-    xval = theta1_scaled(p_pick);
-    yval = theta2_scaled(p_pick);
+    xval = theta1_scaled(p_pick)
+    yval = theta2_scaled(p_pick)
     xtrain(ibeta) = xval; %keep a record of the chosen training pattern values
     ytrain(ibeta) = yval;
     stim = [1;xval;yval]; %stimulate network at this set of inputs, including bias
@@ -90,10 +92,11 @@ for ibeta=1:nbeta
 
     %on the basis of the alpha-node responses, choose how to select
     %weights leading into the ibeta'th beta node
-    wvec = [-nalpha + 1; (sign(sig_alpha)+1)/2]; %FTFY
+    wvec = [0; (sign(sig_alpha)+1)/2]; %FTFY
+    bias = -nalpha/2 + 260;%-sum(wvec)+253;%-[1;sig_alpha]' * wvec  + bias_eps;
+    wvec(1) = bias;
     W_to_beta_from_alpha(ibeta,:) = wvec'; %install these weights leading into beta node  ibeta 
 end
-
 %debug--look response of each beta node over range of stimuli
 %each beta-node response should look like a Gaussian.  If not, reexamine
 %your choices in the preceding loop.  Choice of bias term is also crucial.
@@ -101,8 +104,8 @@ end
 figure(2)
 clf;
 for ibeta=1:nbeta
-    ibeta
-    subplot(4,4,ibeta);
+    ibeta;
+    subplot(5,5,ibeta);
     ffwd_beta_surfplot(W_to_alpha_from_inputs,W_to_beta_from_alpha,ibeta)
     title('trained beta node response')
 end
