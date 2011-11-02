@@ -1,12 +1,12 @@
+clc
 clear all
-
+tic
 %Load Data
 load 'arm_x.txt' %data file containing columns of feature 1, feature 2 and targets
 inputs = arm_x(:,1:2);
 targets = arm_x(:,3);
 [npatterns, ninputs] = size(inputs);
 [~,ngamma] = size(targets);
-
 %Scale inputs -1 to 1. Only affects weights onto alpha
 inputs(:,1) = scale_inputs(inputs(:,1));
 inputs(:,2) = scale_inputs(inputs(:,2));
@@ -25,14 +25,17 @@ nbeta=100;
 epsilon_beta = 6200;
 %gain on beta weights
 beta_gain = .005;
-
+%Max Perterbation Step
+max_delta = .1
 %END TUNING PARAMETERS
+disp('Data Loaded')
+toc
 
 %Plot out training data
-figure(1)
-clf
-plot3(inputs(:,1),inputs(:,2),targets,'*')
-title('Training Data')
+% figure(1)
+% clf
+% plot3(inputs(:,1),inputs(:,2),targets,'*')
+% title('Training Data')
 
 %Initialize weights into alpha layer
 %See report for derivations of these equations
@@ -41,6 +44,9 @@ W_ai(:,2:(ninputs+1)) = random('unif',-1,1,nalpha,ninputs);
 W_ai(:,1) = random('unif', -sum(abs(W_ai),2), sum(abs(W_ai),2), nalpha, 1);
 %W_ai(:,2:(ninputs+1)) = 2 * W_ai(:,2:(ninputs+1)) ./ (ones(nalpha, 1) * inputs_range);
 %W_ai(:,1) = W_ai(:,1) - sum((inputs_max +inputs_min)./ inputs_range);
+
+disp('Alpha Weights Set')
+toc
 
 %Plot out alpha layer
 %alpha_check;
@@ -71,33 +77,11 @@ for ibeta=1:nbeta
     W_ba(ibeta,:) = beta_gain * wvec'; %install these weights in the weight matrix
 end
 
+disp('Beta Weights Set')
+toc
+
 %Plot out beta layer
-%Simulate beta
-xvals = -1:0.1:1;
-yvals = -1:0.1:1;
-imax = length(xvals);
-jmax = length(yvals);
-Zsig=zeros(imax,jmax,nbeta);
-for i=1:imax
-    for j=1:jmax
-        sig_betas = sim_beta(W_ai, W_ba, [xvals(i),yvals(j)]);
-        Zsig(j,i,:)= sig_betas;
-    end
-end
-%Plot
-figure(3)
-clf;
-plotdim = ceil(sqrt(nbeta));
-for ibeta=1:nbeta
-    ibeta;
-    subplot(plotdim,plotdim,ibeta);
-    hold on
-    surf(xvals,yvals,Zsig(:,:,ibeta))
-    title('beta node outputs')
-    plot3(inputs(pat_list(ibeta),1),inputs(pat_list(ibeta),2),1,'r*');
-    hold off
-    title('trained beta node response')
-end
+%beta_check;
 
 %Do Algebraic Solution
 %algebraic solution uses pseudoinverse to find  min-squared error solution for w_vec:
@@ -105,45 +89,39 @@ end
 %need to match: target_vals' = w_vec*sig_betas = w_vec*F
 % or, target_vals = F' * w_vec'
 %or, w_vec' = F'\target_vals
-
 F = sim_beta(W_ai, W_ba, inputs);
 w_vec =F'\targets; %row vector of weights from beta to gamma
-w_vec = w_vec'; %turn w_vec into a column vector
+W_gb = w_vec'; %turn w_vec into a column vector
 
 %Simulate:
-x_sim = sim_gamma(W_ai, W_ba, w_vec, inputs);
+x_sim = sim_gamma(W_ai, W_ba, W_gb, inputs);
 
 %compute the sum squared error for simulation of all training data:
-errvec = targets - x_sim';
-Esqd_avg = norm(errvec)/npatterns;
-rms_err = sqrt(Esqd_avg)
+rms_err = output_error(x_sim,targets)
 
+disp('Algebraic Solution Computed')
+toc
 %Plot out response surface
-plot_steps = 10;
-plot_inputs = zeros((plot_steps+1)^2,ninputs);
-%Create an input set, the long way
-n = 1;
-x_pts = inputs_min(1) : (inputs_range(1)/plot_steps) : inputs_max(1);
-y_pts = inputs_min(2):(inputs_range(2)/plot_steps) : inputs_max(2);
-for i = x_pts
-    for j = y_pts
-        plot_inputs(n,:) = [i, j];
-        n = n+1;
-    end
-end
-%Simulate and plot
-plot_output = sim_gamma(W_ai, W_ba, w_vec, plot_inputs);
-plot_output = reshape(plot_output, plot_steps+1, plot_steps+1);
-figure(4)
-plot3(inputs(:,1),inputs(:,2),targets,'*',inputs(:,1),inputs(:,2),x_sim,'x')
-title('Sample Points and Simulated Function (surface)')
-hold on;
-surf(x_pts, y_pts,plot_output)
-hold off;
-axis([inputs_min(1)-1, inputs_max(1)+1, inputs_min(2)-1, inputs_max(2)+1, min(targets)-1, max(targets)+1])
-
+gamma_check;
+break;
 
 %Do Random Solution
 
 %Initialize weights from beta layer to gamma layer
-W_gb = zeros(ngamma,nbeta+1);
+W_gb = zeros(ngamma,nbeta);
+count = 0;
+err_old = inf;
+while(count<100)
+    delta = random('unif',-max_delta,max_delta,ngamma,nbeta);
+    output = sim_gamma(W_ai,W_ba,W_gb+delta,inputs);
+    rms_err = output_error(output, targets);
+    if rms_err<err_old
+        W_gb = W_gb + delta;
+        err_old = rms_err;
+        disp(['RMS Error: ' num2str(rms_err)]);
+    end
+    count = count +1;
+end
+disp([num2str(count) ' Random Perturbations Completed']);
+toc
+gamma_check;
