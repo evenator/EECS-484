@@ -21,6 +21,8 @@ inputs_range = range(inputs);
 nalpha = 1000;
 %Use this many beta-layer basis functions (must be less than ninputs)
 nbeta=20;
+%Add this constant to the beta layer bias
+epsilon_beta = nalpha/100;
 
 %END TUNING PARAMETERS
 
@@ -69,8 +71,8 @@ for ibeta=1:nbeta
     sig_a = sim_alpha(W_ai, inputs(ipat,:));
     
     %Set weights to that positive inputs to beta node have 1, negative have 0
-    wvec = [0; (sign(sig_a)+1)/2];
-    bias = -nalpha/2 + 260;
+    wvec = [0; sign(sig_a)];
+    bias = -nalpha + epsilon_beta;
     wvec(1) = bias;
     W_ba(ibeta,:) = wvec'; %install these weights in the weight matrix
 end
@@ -82,12 +84,12 @@ plotdim = ceil(sqrt(ibeta));
 for ibeta=1:nbeta
     ibeta;
     subplot(plotdim,plotdim,ibeta);
+    hold on
     ffwd_beta_surfplot(W_ai,W_ba,ibeta);
+    plot3(inputs(pat_list(ibeta),1),inputs(pat_list(ibeta),1),1,'r*');
+    hold off
     title('trained beta node response')
 end
-
-%Initialize weights from beta layer to gamma layer
-W_gb = zeros(ngamma,nbeta+1);
 
 %Do Algebraic Solution
 %algebraic solution uses pseudoinverse to find  min-squared error solution for w_vec:
@@ -131,3 +133,9 @@ hold on;
 surf(x_pts, y_pts,plot_output)
 hold off;
 axis([inputs_min(1)-1, inputs_max(1)+1, inputs_min(2)-1, inputs_max(2)+1, min(targets)-1, max(targets)+1])
+
+
+%Do Random Solution
+
+%Initialize weights from beta layer to gamma layer
+W_gb = zeros(ngamma,nbeta+1);
