@@ -24,11 +24,23 @@ nalpha = 100;  %EXPERIMENT WITH THIS VALUE
 
 %initialize weights from inputs to alpha layer to random values:
 %Use Random values
-Walpha_range = [-1,1;-1,1;-1,1];
-W_to_alpha_from_inputs = zeros(nalpha,ninputs+1); %POOR CHOICE OF WEIGHTS! FIX THIS
-for(i =1:ninputs+1)
-    W_to_alpha_from_inputs(:,i) = random('unif',Walpha_range(i,1),Walpha_range(i,2),1,nalpha);
+Walpha_range = [min(theta1),max(theta1);min(theta2),max(theta2)];
+W_to_alpha_from_inputs = zeros(nalpha,ninputs+1); %FTFY
+for(i = 1:ninputs)
+    W_to_alpha_from_inputs(:,i+1) = random('unif',Walpha_range(i,1),Walpha_range(i,2),1,nalpha);
 end
+for(j = 1:nalpha)
+    W_to_alpha_from_inputs(j,1) = random('unif',-sum(abs(W_to_alpha_from_inputs(j,:))),sum(abs(W_to_alpha_from_inputs(j,:)))); %THIS NEEDS NORMALIZED!
+end
+
+%Plot out alpha layer
+figure(7)
+hold on
+for j = 1:nalpha
+    plot_perceptron(W_to_alpha_from_inputs(j,:));
+end
+plot(theta1, theta2, 'r*');
+hold off
 
 %beta layer should behave equivalent to radial basis funcs
 %number of beta nodes must be less than number of training patterns
@@ -72,7 +84,7 @@ for ibeta=1:nbeta
 
     %on the basis of the alpha-node responses, choose how to select
     %weights leading into the ibeta'th beta node
-    wvec = [sign(sig_alpha); -nalpha + .5]; %FTFY
+    wvec = [-nalpha + .5; sign(sig_alpha)]; %FTFY
     W_to_beta_from_alpha(ibeta,:) = wvec'; %install these weights leading into beta node  ibeta 
 end
 
