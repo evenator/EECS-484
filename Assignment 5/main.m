@@ -18,11 +18,13 @@ inputs_range = range(inputs);
 %TUNING PARAMETERS
 
 %Use this many alpha-layer perceptrons:
-nalpha = 1000;
+nalpha = 10000;
 %Use this many beta-layer basis functions (must be less than ninputs)
-nbeta=20;
+nbeta=100;
 %Add this constant to the beta layer bias
-epsilon_beta = nalpha/100;
+epsilon_beta = 6200;
+%gain on beta weights
+beta_gain = .005;
 
 %END TUNING PARAMETERS
 
@@ -41,7 +43,7 @@ W_ai(:,1) = random('unif', -sum(abs(W_ai),2), sum(abs(W_ai),2), nalpha, 1);
 %W_ai(:,1) = W_ai(:,1) - sum((inputs_max +inputs_min)./ inputs_range);
 
 %Plot out alpha layer
-alpha_check;
+%alpha_check;
 
 %Initialize weights from alpha layer to beta layer
 W_ba = zeros(nbeta,nalpha+1);
@@ -66,10 +68,23 @@ for ibeta=1:nbeta
     wvec = [0; sign(sig_a)];
     bias = -nalpha + epsilon_beta;
     wvec(1) = bias;
-    W_ba(ibeta,:) = wvec'; %install these weights in the weight matrix
+    W_ba(ibeta,:) = beta_gain * wvec'; %install these weights in the weight matrix
 end
 
 %Plot out beta layer
+%Simulate beta
+xvals = -1:0.1:1;
+yvals = -1:0.1:1;
+imax = length(xvals);
+jmax = length(yvals);
+Zsig=zeros(imax,jmax,nbeta);
+for i=1:imax
+    for j=1:jmax
+        sig_betas = sim_beta(W_ai, W_ba, [xvals(i),yvals(j)]);
+        Zsig(j,i,:)= sig_betas;
+    end
+end
+%Plot
 figure(3)
 clf;
 plotdim = ceil(sqrt(nbeta));
@@ -77,7 +92,8 @@ for ibeta=1:nbeta
     ibeta;
     subplot(plotdim,plotdim,ibeta);
     hold on
-    ffwd_beta_surfplot(W_ai,W_ba,ibeta);
+    surf(xvals,yvals,Zsig(:,:,ibeta))
+    title('beta node outputs')
     plot3(inputs(pat_list(ibeta),1),inputs(pat_list(ibeta),2),1,'r*');
     hold off
     title('trained beta node response')
