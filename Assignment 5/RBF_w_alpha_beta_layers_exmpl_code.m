@@ -12,41 +12,47 @@ temp=size(theta1);
 npatterns = temp(1); %there are this many training patterns in the file
 bias_inputs = ones(npatterns,1); %fake input node for bias--always outputs 1 for every pattern
 
+
+%TUNING PARAMETERS
+
+%use this many alpha-layer perceptrons 
+nalpha = 400;  %EXPERIMENT WITH THIS VALUE
+%number of beta nodes must be less than number of training patterns
+nbeta=10; %EXPERIMENT WITH THIS
+
+%END TUNING PARAMETERS
+
+
 figure(1)
 plot3(theta1,theta2,target_vals,'*') %take a look at the training data
 title('display of training data')
 
+[theta1_scaled, theta1_min, theta1_max] = scale_inputs(theta1);
+[theta2_scaled, theta2_min, theta2_max] = scale_inputs(theta2);
+
 ninputs=2; %theta1 and theta2, also weights from bias
 
-%use this many alpha-layer perceptrons 
-nalpha = 100;  %EXPERIMENT WITH THIS VALUE
 %use tansig() activation function for alpha nodes
 
 %initialize weights from inputs to alpha layer to random values:
 %Use Random values
-Walpha_range = [min(theta1),max(theta1);min(theta2),max(theta2)];
 W_to_alpha_from_inputs = zeros(nalpha,ninputs+1); %FTFY
-for(i = 1:ninputs)
-    W_to_alpha_from_inputs(:,i+1) = random('unif',Walpha_range(i,1),Walpha_range(i,2),1,nalpha);
-end
+W_to_alpha_from_inputs(:,2:(ninputs+1)) = random('unif',-1,1,nalpha,ninputs);
+
 for(j = 1:nalpha)
-    W_to_alpha_from_inputs(j,1) = random('unif',-sum(abs(W_to_alpha_from_inputs(j,:))),sum(abs(W_to_alpha_from_inputs(j,:)))); %THIS NEEDS NORMALIZED!
+    bound = sum(abs(W_to_alpha_from_inputs(j,2:ninputs+1)));
+    W_to_alpha_from_inputs(j,1) = random('unif',-bound,bound); %THIS NEEDS NORMALIZED!
 end
 
 %Plot out alpha layer
 figure(7)
+clf
 hold on
 for j = 1:nalpha
     plot_perceptron(W_to_alpha_from_inputs(j,:));
 end
-plot(theta1, theta2, 'r*');
+plot(theta1_scaled, theta2_scaled, 'r*');
 hold off
-
-%beta layer should behave equivalent to radial basis funcs
-%number of beta nodes must be less than number of training patterns
-% use logsig() activation fnc for beta nodes
-
-nbeta=10; %EXPERIMENT WITH THIS
 
 %initialize alpha-to-beta weights all to zero; include room for virtual
 %bias alpha node; train these weights by imprinting
@@ -74,8 +80,8 @@ for ibeta=1:nbeta
     %Add the chosen pattern to the list of chosen patterns
     p_pick = ipat;
     
-    xval = theta1(p_pick);
-    yval = theta2(p_pick);
+    xval = theta1_scaled(p_pick);
+    yval = theta2_scaled(p_pick);
     xtrain(ibeta) = xval; %keep a record of the chosen training pattern values
     ytrain(ibeta) = yval;
     stim = [1;xval;yval]; %stimulate network at this set of inputs, including bias
@@ -84,7 +90,7 @@ for ibeta=1:nbeta
 
     %on the basis of the alpha-node responses, choose how to select
     %weights leading into the ibeta'th beta node
-    wvec = [-nalpha + .5; sign(sig_alpha)]; %FTFY
+    wvec = [-nalpha + 1; (sign(sig_alpha)+1)/2]; %FTFY
     W_to_beta_from_alpha(ibeta,:) = wvec'; %install these weights leading into beta node  ibeta 
 end
 
@@ -100,11 +106,13 @@ for ibeta=1:nbeta
     ffwd_beta_surfplot(W_to_alpha_from_inputs,W_to_beta_from_alpha,ibeta)
     title('trained beta node response')
 end
+break;
+
 
 %now utilize all training data...
 %compute outputs of alpha layer:
 %u_alphas has nalpha rows (one for each node) and npatterns columns 
-u_alphas = W_to_alpha_from_inputs*[bias_inputs';theta1';theta2'];
+u_alphas = W_to_alpha_from_inputs*[bias_inputs';theta1_scaled';theta2_scaled'];
 sig_alphas = tansig(u_alphas);
 sig_alphas = [ones(1,npatterns );sig_alphas]; %insert virtual bias nodes in first row
        
@@ -153,13 +161,13 @@ sig_betas = [ones(1,nbeta);sig_betas]; %virtual beta node output = 1 for every s
 z_train=w_vec*sig_betas;
 
 %sample the network response for uniform scan over rectangular range:
-imax = 11;
-jmax = 11;
+xvals=[0:0.1:1]*0.1 +0.157; %choose to sample over a rectangular domain
+yvals=[0:0.1:1]*0.16 +0.22;
+imax = length(xvals);
+jmax = length(yvals);
 xpts=zeros(imax*jmax);
 ypts=zeros(imax*jmax);
 zpts=zeros(imax*jmax);
-xvals=[0:0.1:1]*0.1 +0.157; %choose to sample over a rectangular domain
-yvals=[0:0.1:1]*0.16 +0.22;
 Z=zeros(11,11); %holder for 11x11 grid of outputsn
 nsamps=0;
 for (i=1:imax)
