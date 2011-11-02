@@ -14,7 +14,6 @@ end
 %Simulate and plot
 plot_output = sim_gamma(W_ai, W_ba, W_gb, plot_inputs);
 plot_output = reshape(plot_output, plot_steps+1, plot_steps+1);
-figure(4)
 plot3(inputs(:,1),inputs(:,2),targets,'*',inputs(:,1),inputs(:,2),x_sim,'x')
 title('Sample Points and Simulated Function (surface)')
 hold on;

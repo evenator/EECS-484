@@ -25,8 +25,10 @@ nbeta=100;
 epsilon_beta = 6200;
 %gain on beta weights
 beta_gain = .005;
-%Max Perterbation Step
-max_delta = .1
+%Max Perturbation Step (uniform dist)
+max_delta = .01;
+%Perturbation Std Dev (norm dist)
+delta_std = 1;
 %END TUNING PARAMETERS
 disp('Data Loaded')
 toc
@@ -97,31 +99,46 @@ W_gb = w_vec'; %turn w_vec into a column vector
 x_sim = sim_gamma(W_ai, W_ba, W_gb, inputs);
 
 %compute the sum squared error for simulation of all training data:
-rms_err = output_error(x_sim,targets)
-
+rms_err = output_error(x_sim,targets);
+opt_err = rms_err;
 disp('Algebraic Solution Computed')
+disp(['RMS Error: ' num2str(rms_err)]);
 toc
+
 %Plot out response surface
+figure(4)
+clf;
 gamma_check;
-break;
 
 %Do Random Solution
 
 %Initialize weights from beta layer to gamma layer
 W_gb = zeros(ngamma,nbeta);
 count = 0;
-err_old = inf;
-while(count<100)
+rms_err = inf;
+last_hit = 0;
+while(rms_err-opt_err>.01 && count-last_hit<100)
+    %Generate perturbation vector
+    %delta = random('norm',0,delta_std,ngamma,nbeta);
     delta = random('unif',-max_delta,max_delta,ngamma,nbeta);
+    %Simulate with perturbed weights
     output = sim_gamma(W_ai,W_ba,W_gb+delta,inputs);
-    rms_err = output_error(output, targets);
-    if rms_err<err_old
+    %Calculate error
+    new_err = output_error(output, targets);
+    %If error is less than before, keep these weights
+    if new_err<rms_err
         W_gb = W_gb + delta;
-        err_old = rms_err;
+        rms_err = new_err;
         disp(['RMS Error: ' num2str(rms_err)]);
+        last_hit = count;
     end
     count = count +1;
 end
 disp([num2str(count) ' Random Perturbations Completed']);
+disp(['RMS Error: ' num2str(rms_err)]);
 toc
+
+%Plot Out Results
+figure(5)
+clf;
 gamma_check;
