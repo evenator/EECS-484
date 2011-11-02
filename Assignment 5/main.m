@@ -67,15 +67,6 @@ for ibeta=1:nbeta
     bias = -nalpha + epsilon_beta;
     wvec(1) = bias;
     W_ba(ibeta,:) = wvec'; %install these weights in the weight matrix
-    
-    figure(3)
-    clf;
-    hold on
-    ffwd_beta_surfplot(W_ai,W_ba,ibeta);
-    plot3(inputs(ipat,1),inputs(ipat,2),1,'r*');
-    hold off
-    title('trained beta node response')
-    pause;
 end
 
 %Plot out beta layer

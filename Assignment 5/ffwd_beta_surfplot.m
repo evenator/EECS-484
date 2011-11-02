@@ -6,13 +6,12 @@ xvals = -1:0.1:1;
 yvals = -1:0.1:1;
 imax = length(xvals);
 jmax = length(yvals);
-Zu=zeros(imax,jmax);
 Zsig=zeros(imax,jmax);
 
 for i=1:imax
     for j=1:jmax
         sig_betas = sim_beta(W_ai, W_ba, [xvals(i),yvals(j)]);
-        Zsig(i,j)= sig_betas(ibeta);
+        Zsig(j,i)= sig_betas(ibeta);
     end
 end
 surf(xvals,yvals,Zsig)
