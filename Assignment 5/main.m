@@ -41,15 +41,7 @@ W_ai(:,1) = random('unif', -sum(abs(W_ai),2), sum(abs(W_ai),2), nalpha, 1);
 %W_ai(:,1) = W_ai(:,1) - sum((inputs_max +inputs_min)./ inputs_range);
 
 %Plot out alpha layer
-figure(2)
-clf
-hold on
-for j = 1:nalpha
-    plot_perceptron(W_ai(j,:));
-end
-plot(inputs(:,1), inputs(:,2), 'r*');
-axis([inputs_min(1) inputs_max(1) inputs_min(2) inputs_max(2)])
-hold off
+alpha_check;
 
 %Initialize weights from alpha layer to beta layer
 W_ba = zeros(nbeta,nalpha+1);
@@ -70,23 +62,32 @@ for ibeta=1:nbeta
     
     sig_a = sim_alpha(W_ai, inputs(ipat,:));
     
-    %Set weights to that positive inputs to beta node have 1, negative have 0
+    %Set weights so positive inputs to beta node have 1, negative have -1
     wvec = [0; sign(sig_a)];
     bias = -nalpha + epsilon_beta;
     wvec(1) = bias;
     W_ba(ibeta,:) = wvec'; %install these weights in the weight matrix
+    
+    figure(3)
+    clf;
+    hold on
+    ffwd_beta_surfplot(W_ai,W_ba,ibeta);
+    plot3(inputs(ipat,1),inputs(ipat,2),1,'r*');
+    hold off
+    title('trained beta node response')
+    pause;
 end
 
 %Plot out beta layer
 figure(3)
 clf;
-plotdim = ceil(sqrt(ibeta));
+plotdim = ceil(sqrt(nbeta));
 for ibeta=1:nbeta
     ibeta;
     subplot(plotdim,plotdim,ibeta);
     hold on
     ffwd_beta_surfplot(W_ai,W_ba,ibeta);
-    plot3(inputs(pat_list(ibeta),1),inputs(pat_list(ibeta),1),1,'r*');
+    plot3(inputs(pat_list(ibeta),1),inputs(pat_list(ibeta),2),1,'r*');
     hold off
     title('trained beta node response')
 end
