@@ -21,7 +21,7 @@ for ibeta=1:nbeta
     hold on
     surf(xvals,yvals,Zsig(:,:,ibeta))
     title('beta node outputs')
-    plot3(inputs(pat_list(ibeta),1),inputs(pat_list(ibeta),2),1,'r*');
+    %plot3(inputs(pat_list(ibeta),1),inputs(pat_list(ibeta),2),1,'r*');
     hold off
     title('trained beta node response')
 end

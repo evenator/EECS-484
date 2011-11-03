@@ -20,11 +20,11 @@ inputs_range = range(inputs);
 %Use this many alpha-layer perceptrons:
 nalpha = 100;
 %Use this many beta-layer basis functions (must be less than ninputs)
-nbeta=25;
+nbeta=50;
 %Add this constant to the beta layer bias
 epsilon_beta = 10;
 %gain on beta weights
-beta_gain = .1;
+beta_gain = .125;
 %Max Perturbation Step (uniform dist)
 max_delta = .001;
 %Perturbation Std Dev (norm dist)
@@ -74,8 +74,12 @@ for ibeta=1:nbeta
     
     %Set weights so positive inputs to beta node have 1, negative have -1
     wvec = [0; sign(sig_a)];
+    
+    %Set bias
     bias = -nalpha + epsilon_beta;
     wvec(1) = bias;
+    
+    %Multiply entire thing by a gain <1 to soften the Gaussian
     W_ba(ibeta,:) = beta_gain * wvec'; %install these weights in the weight matrix
 end
 
