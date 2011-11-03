@@ -18,11 +18,11 @@ inputs_range = range(inputs);
 %TUNING PARAMETERS
 
 %Use this many alpha-layer perceptrons:
-nalpha = 1000;
+nalpha = 100;
 %Use this many beta-layer basis functions (must be less than ninputs)
-nbeta=100;
+nbeta=25;
 %Add this constant to the beta layer bias
-epsilon_beta = 400;
+epsilon_beta = 10;
 %gain on beta weights
 beta_gain = .1;
 %Max Perturbation Step (uniform dist)
@@ -83,7 +83,7 @@ disp('Beta Weights Set')
 toc
 
 %Plot out beta layer
-%beta_check;
+beta_check;
 
 %Do Algebraic Solution
 %algebraic solution uses pseudoinverse to find  min-squared error solution for w_vec:

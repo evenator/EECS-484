@@ -16,7 +16,7 @@ x_pts = inputs_min(1) : (inputs_range(1)/plot_steps) : inputs_max(1);
 y_pts = inputs_min(2):(inputs_range(2)/plot_steps) : inputs_max(2);
 for i = x_pts
     for j = y_pts
-        plot_inputs(n,:) = [i, j];
+        plot_inputs(n,:) = [j,i];
         n = n+1;
     end
 end
@@ -28,6 +28,9 @@ for i=1:stop_num
     z = plot_output(i,:);
     z_out = reshape(z, plot_steps+1, plot_steps+1);
     surf(x_pts, y_pts, z_out);
+    %x = W_ai(i,1) * W_ai(i,2)/sqrt(W_ai(i,2)^2+W_ai(i,3)^2);
+    %y = W_ai(i,1) * W_ai(i,3)/sqrt(W_ai(i,2)^2+W_ai(i,3)^2);
+    %plot3(x, y, .1,'b*');
     plot3(inputs(:,1), inputs(:,2),ones(npatterns,1),'b*');
     %plot_perceptron(W_ai(i,:));
     hold off
