@@ -18,13 +18,13 @@ inputs_range = range(inputs);
 %TUNING PARAMETERS
 
 %Use this many alpha-layer perceptrons:
-nalpha = 10000;
+nalpha = 1000;
 %Use this many beta-layer basis functions (must be less than ninputs)
 nbeta=100;
 %Add this constant to the beta layer bias
-epsilon_beta = 6200;
+epsilon_beta = 400;
 %gain on beta weights
-beta_gain = .005;
+beta_gain = .1;
 %Max Perturbation Step (uniform dist)
 max_delta = .001;
 %Perturbation Std Dev (norm dist)
@@ -110,6 +110,7 @@ figure(4)
 clf;
 gamma_check;
 
+break;
 %Do Random Solution
 
 %Initialize weights from beta layer to gamma layer

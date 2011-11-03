@@ -28,6 +28,7 @@ for i=1:stop_num
     z = plot_output(i,:);
     z_out = reshape(z, plot_steps+1, plot_steps+1);
     surf(x_pts, y_pts, z_out);
+    plot3(inputs(:,1), inputs(:,2),ones(npatterns,1),'b*');
     %plot_perceptron(W_ai(i,:));
     hold off
     title('trained alpha node response')
