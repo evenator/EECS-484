@@ -26,7 +26,7 @@ epsilon_beta = 6200;
 %gain on beta weights
 beta_gain = .005;
 %Max Perturbation Step (uniform dist)
-max_delta = .01;
+max_delta = .001;
 %Perturbation Std Dev (norm dist)
 delta_std = 1;
 %END TUNING PARAMETERS
