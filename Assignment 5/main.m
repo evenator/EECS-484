@@ -20,13 +20,13 @@ inputs_range = range(inputs);
 %Use this many alpha-layer perceptrons:
 nalpha = 100;
 %Use this many beta-layer basis functions (must be less than ninputs)
-nbeta=50;
+nbeta = 50;
 %Add this constant to the beta layer bias
 epsilon_beta = 10;
 %gain on beta weights
 beta_gain = .125;
 %Max Perturbation Step (uniform dist)
-max_delta = .001;
+max_delta = .2;
 %Perturbation Std Dev (norm dist)
 delta_std = 1;
 %END TUNING PARAMETERS
@@ -87,7 +87,7 @@ disp('Beta Weights Set')
 toc
 
 %Plot out beta layer
-beta_check;
+%beta_check;
 
 %Do Algebraic Solution
 %algebraic solution uses pseudoinverse to find  min-squared error solution for w_vec:
@@ -114,7 +114,6 @@ figure(4)
 clf;
 gamma_check;
 
-break;
 %Do Random Solution
 
 %Initialize weights from beta layer to gamma layer
@@ -122,7 +121,7 @@ W_gb = zeros(ngamma,nbeta);
 count = 0;
 rms_err = inf;
 last_hit = 0;
-while(rms_err-opt_err>.01 && count-last_hit<100)
+while(rms_err-opt_err>.01 && count-last_hit<1000)
     %Generate perturbation vector
     %delta = random('norm',0,delta_std,ngamma,nbeta);
     delta = random('unif',-max_delta,max_delta,ngamma,nbeta);
@@ -134,12 +133,17 @@ while(rms_err-opt_err>.01 && count-last_hit<100)
     if new_err<rms_err
         W_gb = W_gb + delta;
         rms_err = new_err;
-        disp(['RMS Error: ' num2str(rms_err)]);
+        %disp(['RMS Error: ' num2str(rms_err)]);
         last_hit = count;
     end
     count = count +1;
 end
 disp([num2str(count) ' Random Perturbations Completed']);
+if(count-last_hit<100)
+    disp('Successful convergence');
+else
+    disp('Failed to converge');
+end
 disp(['RMS Error: ' num2str(rms_err)]);
 toc
 
