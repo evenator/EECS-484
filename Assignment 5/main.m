@@ -26,7 +26,7 @@ epsilon_beta = 10;
 %gain on beta weights
 beta_gain = .125;
 %Max Perturbation Step (uniform dist)
-max_delta = .2;
+max_delta = .5;
 %Perturbation Std Dev (norm dist)
 delta_std = 1;
 %END TUNING PARAMETERS
@@ -117,11 +117,13 @@ gamma_check;
 %Do Random Solution
 
 %Initialize weights from beta layer to gamma layer
+rms_hist = zeros(10000,1);
+    
 W_gb = zeros(ngamma,nbeta);
-count = 0;
+count = 1;
 rms_err = inf;
 last_hit = 0;
-while(rms_err-opt_err>.01 && count-last_hit<1000)
+while(count<10000)
     %Generate perturbation vector
     %delta = random('norm',0,delta_std,ngamma,nbeta);
     delta = random('unif',-max_delta,max_delta,ngamma,nbeta);
@@ -136,6 +138,7 @@ while(rms_err-opt_err>.01 && count-last_hit<1000)
         %disp(['RMS Error: ' num2str(rms_err)]);
         last_hit = count;
     end
+    rms_hist(count) = rms_err;
     count = count +1;
 end
 disp([num2str(count) ' Random Perturbations Completed']);
@@ -151,3 +154,8 @@ toc
 figure(5)
 clf;
 gamma_check;
+
+%Plot Out RMS History
+figure(6)
+clf;
+plot(1:count,rms_hist(1:count));
