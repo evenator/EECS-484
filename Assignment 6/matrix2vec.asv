@@ -1,0 +1,16 @@
+%matrix2vec: converts a matrix to a vector by stacking all cols
+function [Avec]=matrix2vec(A)
+
+%first, string out the matrix into a vector
+Avec = reshape(A,[],1);
+
+%convert to bipolar 
+Avec(find(Avec)) = 1;
+
+for i=1:nrows*ncols
+    if Atemp(i)==0
+        Avec(i)= -1;
+    else
+        Avec(i)=1;
+    end
+end
