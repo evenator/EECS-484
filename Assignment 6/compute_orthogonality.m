@@ -1,0 +1,9 @@
+mat = zeros(7, 512);
+mat(1,:) = reshape(imread('images/handheart.bmp'),1,[]);
+mat(2,:) = reshape(imread('images/happyworld.bmp'),1,[]);
+mat(3,:) = reshape(imread('images/clubspade.bmp'),1,[]);
+mat(4,:) = reshape(imread('images/computersum.bmp'),1,[]);
+mat(5,:) = reshape(imread('images/notespell.bmp'),1,[]);
+mat(6,:) = reshape(imread('images/printtrash.bmp'),1,[]);
+mat(7,:) = reshape(imread('images/winhelp.bmp'),1,[]);
+out = mat * mat'
