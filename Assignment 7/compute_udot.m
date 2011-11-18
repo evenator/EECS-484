@@ -19,7 +19,7 @@ for X=1:N_CITIES
         % do include influence of city 1 on day 1
         for y=1:N_CITIES
             for jy=1:N_DAYS
-                U_dot(X,ix) + T(x,ix,y,jy) * V(y,jy)
+                U_dot(X,ix) + T(X,ix,y,jy) * V(y,jy);
             end
         end
         
