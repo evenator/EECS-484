@@ -14,12 +14,12 @@ function [U_dot,int_Eabc] = compute_udot(V,T,U,J,DT,LAMBDA,int_Eabc,Tabc,Jbias)
 			U_dot(X,ix)  = J(X,ix);
 			% decay: resistor to gnd; 
 			%might try eliminating this contribution...
-			U_dot(X,ix) =U_dot(X,ix)- U(X,ix); % corresponds to TAU=1
+			U_dot(X,ix) = U_dot(X,ix)- U(X,ix); % corresponds to TAU=1
 			%influences of other outputs via Tij
 			% do include influence of city 1 on day 1
-			for Y=1:N_CITIES
+			for y=1:N_CITIES
 				for jy=1:N_DAYS
-					%INCLUDE INFLUENCE OF ALL SYNAPSES IN COMPUTING U_DOT
+					U_dot(X,ix) + T(x,ix,y,jy) * V(y,jy)%INCLUDE INFLUENCE OF ALL SYNAPSES IN COMPUTING U_DOT
                 end
             end
 
