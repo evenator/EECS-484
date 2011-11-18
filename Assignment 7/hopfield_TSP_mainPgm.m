@@ -8,10 +8,10 @@ load 'intercity_distances.dat'; %read in the intercity distances
 
 %Optimization Parameters (pg 147 of "Neural Computation of
 % Decisions in Optimization Problems") Suppress by setting to 0.
-A = 0;
-B = 0;
-C = 0;
-D = 1;
+A = 1;
+B = 1;
+C = 1;
+D = 10;
 
 %Hopfield recommended Jbias (current) > C*Ncities.
 %Scale up by this factor (default 1.0)
