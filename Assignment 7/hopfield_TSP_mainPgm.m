@@ -6,6 +6,7 @@ load 'intercity_distances.dat'; %read in the intercity distances
 n_runs = 20;
 V_vec = zeros(n_runs,1);
 cost_vec = zeros(n_runs,1);
+time_vec = zeros(n_runs,1);
 run_count = 1;
 while(run_count<=n_runs)
     
@@ -89,7 +90,7 @@ while(run_count<=n_runs)
     end
     V_vec(run_count) = V_sum;
     cost_vec(run_count) = tripcost;
+    time_vec(run_count) = count;
+    run_count = run_count+1;
 end
-V_vec
-cost_vec
 
