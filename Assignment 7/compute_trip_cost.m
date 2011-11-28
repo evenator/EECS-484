@@ -5,17 +5,9 @@
 % trip
 function [tripcost] = compute_trip_cost(V,costs)
 %first, threshhold V's to get a definitive itinerary:
-temp = size(V);
-Ncities=temp(1);
-Ndays=Ncities;
-Vbinary = 0*V;
-for X=1:Ncities
-    for i=1:Ndays
-        if V(X,i)>0.5
-            Vbinary(X,i)=1;
-        end
-    end
-end
+[Ncities, Ndays] = size(V);
+Vbinary = V>.5;
+
 %convert to a trip:
 trip = ones(1,Ncities+1);
 
