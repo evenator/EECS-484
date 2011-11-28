@@ -2,49 +2,52 @@
 %this code is specialized for a single input and a single output
 %uses logsig() activation fnc
 
+clear all
+
 %set virtual neuron (bias input) to be neuron #1
 %set input neuron to be neuron 2, 
 %set output neuron to be neuron 3,
 % additional neurons are 4 through Nneurons
-clear all
-Nneurons = 3; %CHOOSE THIS; N=4 for  single "interneuron" case
-INIT_WEIGHT_MAG = 1.0; %scale synapse initializations to random number +/- in this range
-ETA = 0.01; %learning factor--tune this
-ETASIG=0.01; %learning weight for adjusting initial conditions of interneurons--tune this
-%read in the training file:
-load beats.dat  %simple pattern
-%alternatively, uncomment next two lines to use second, more complex pattern
-%load beats2.dat 
-%beats=beats2;
-temp=size(beats);
-T_time_steps = temp(1);
-time_vec=(1:T_time_steps);
-inputs=beats(:,1)
-targets=beats(:,2)
 
-%initialize network: set synaptic weights to random values, scaled by INIT_WEIGHT_MAG
+%Tunable Parameters
+Nneurons = 3; %Number of neurons (3 + number of interneurons)
+INIT_WEIGHT_MAG = 1.0; %Range (+/-) of initial synapse weights
+ETA = 0.01; %Learning rate
+ETASIG=0.01; %learning weight for adjusting initial conditions of interneurons--tune this
+
+%Read in beat from training file
+load beats.dat;
+%load beats2.dat;
+%beats=beats2;
+inputs = beats(:,1);
+targets = beats(:,2);
+
+[T_time_steps, ~] = size(beats);
+time_vec=(1:T_time_steps);
+
+%Initialize synaptic weights to random values
 W = (rand(Nneurons,Nneurons)-0.5)*2.0*INIT_WEIGHT_MAG
 
-%define matrices to hold entire time history of values of interest:
-u_history=zeros(Nneurons,T_time_steps);
+%Initialize matrices to hold histories of values
+u_history = zeros(Nneurons,T_time_steps);
 sigma_history = zeros(Nneurons,T_time_steps);
-F_sigmas=zeros(Nneurons,T_time_steps);
-F_uvals=zeros(Nneurons,T_time_steps);
+F_sigmas = zeros(Nneurons,T_time_steps);
+F_uvals = zeros(Nneurons,T_time_steps);
 gprimes = zeros(Nneurons,T_time_steps);
 
-%output for bias node should be  unity for all time steps:
-sigma_history(1,:)=1.0; %bias node always outputs unity
-%for sensory node, output must be the prescribed beat sync stimulation:
-sigma_history(2,:)=inputs;
-%force the network to give correct output at initial time:
-sigma_history(3,1)=targets(1);  %node three at time 1
-%all other "interneurons" are initialized to random values
-%(these values may be optimized by BPTT)
-sigma_history(4:Nneurons,1)=rand(Nneurons-3,1); %all other nodes at time 1
+%Bias node output is always 1
+sigma_history(1,:) = 1.0;
 
-%don't care about u-values at time 1, since we have already defined sigma vals for time 1;
+%Sensory node always outputs input
+sigma_history(2,:) = inputs;
 
-%iterate on learning:
+%Force the network to give correct output at initial time:
+sigma_history(3,1)=targets(1);
+
+%Initialize all interneurons to random values
+sigma_history(4:Nneurons,1) = rand(Nneurons-3,1);
+
+%Learn by iteration
 niters=1
 while niters>0
     for iiter = 1:niters
