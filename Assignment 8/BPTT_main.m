@@ -1,11 +1,11 @@
-%PS8 BPTT, recurrent neural net 
+%PS8 BPTT, recurrent neural net
 %this code is specialized for a single input and a single output
 %uses logsig() activation fnc
 
 clear all
 
 %set virtual neuron (bias input) to be neuron #1
-%set input neuron to be neuron 2, 
+%set input neuron to be neuron 2,
 %set output neuron to be neuron 3,
 % additional neurons are 4 through Nneurons
 
@@ -48,33 +48,27 @@ sigma_history(3,1)=targets(1);
 sigma_history(4:Nneurons,1) = rand(Nneurons-3,1);
 
 %Learn by iteration
-niters=1
+niters=1;
 while niters>0
     for iiter = 1:niters
-    %simulate network for all time steps
+        %simulate network for all time steps
         for t=2:T_time_steps
-                 %note insertion of time slip--sigmas at time t-1 induce
-                 %u-vals at time t
-          u_history(:,t)=W*sigma_history(:,t-1); %inputs are defined by sigmas, including bias and input                                                                       
-          %compute outputs for these inputs, except for predefined bias and stimulation
-          sigma_history(3:Nneurons,t)= logsig(u_history(3:Nneurons,t)); %squashing function    
+            %note insertion of time slip--sigmas at time t-1 induce
+            %u-vals at time t
+            u_history(:,t)=W*sigma_history(:,t-1); %inputs are defined by sigmas, including bias and input
+            %compute outputs for these inputs, except for predefined bias and stimulation
+            sigma_history(3:Nneurons,t)= logsig(u_history(3:Nneurons,t)); %squashing function
         end
         
         %done with simulation; compute all errors
         outputs=sigma_history(3,:); %have defined neuron 3 as the sole output neuron
         errs = outputs'-targets; %compare output-neuron value to target at each time step
-        Esqd = 0.5*errs'*errs; %sum squared error
-        %u_history % optionally, output u_history and sigma_history for debug
-        %sigma_history
+        Esqd = 0.5 * (errs'*errs); %sum squared error
         
-        %compute all derivatives; could do this in a summation,
-%          for t=1:T_time_steps
-%             gprimes(:,t) = dlogsig(u_history(:,t),sigma_history(:,t)); %dsigma/du for each node for each time step
-%          end
- %or faster in a single operation:
-        gprimes=dlogsig(u_history,sigma_history);
-        gprimes(1:2,:)=zeros(2,T_time_steps); %force bias and input nodes to be unchanging
-
+        %compute all derivatives
+        gprimes = dlogsig(u_history,sigma_history);
+        gprimes(1:2,:) = zeros(2,T_time_steps); %force bias and input nodes to be unchanging
+        
         %compute all ordered derivatives w/ rt sigmas and u's for all time
         %steps, backwards through time
         for t=T_time_steps:-1:1
@@ -85,12 +79,12 @@ while niters>0
         end
         %compute ordered derivatives for wij for network unfolded in time
         [F_wji] = compute_F_wji(sigma_history,F_uvals) %INSERT ; TO SUPPRESS PRINTING ONCE DEBUGGED
-
+        
         %debug--test derivs relative to numerical approx
         %approx_F_wji should be the same as F_wji
         %COMMENT this out once F_wji is debugged
         [approx_F_wji] = test_dEsqd_dwji(W,sigma_history,u_history,targets)
-
+        
         %update weights:
         W = W - ETA*F_wji;   %same as back-propagation
         
@@ -99,18 +93,16 @@ while niters>0
         %every 100 iterations, print out the fit error and update a
         %graphical display of target values and output values
         if  mod(iiter,100)==0
-                    iiter %iteration number
-                  rms_err=sqrt(Esqd/T_time_steps)
-                 figure(1)
-                plot(time_vec,targets,'*',time_vec,outputs,'o');
-                pause
+            iiter %iteration number
+            rms_err = sqrt(Esqd/T_time_steps)
+            figure(1)
+            plot(time_vec,targets,'*',time_vec,outputs,'o');
+            pause
         end
     end
-    %F_wji %debug
-    %approx_F_wji
-    %sigma_history %(4:Nneurons,1)
+    
     figure(1)
     plot(time_vec,targets,'*',time_vec,outputs,'o');
     title('targets and network responses vs. time')
-    niters= input('enter number of iterations: ')
+    niters = input('enter number of iterations: ');
 end  %iterate
