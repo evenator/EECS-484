@@ -72,8 +72,8 @@ while niters>0
         %compute all ordered derivatives w/ rt sigmas and u's for all time
         %steps, backwards through time
         for t=T_time_steps:-1:1
-            F_sigmas(:,t)= compute_F_o(W,errs,F_uvals,t); %F_sigma at time t first,
-            F_uvals(:,t)= compute_F_u(F_sigmas,gprimes,t) %followed by F_uvals at time t
+            F_sigmas(:,t) = compute_F_o(W,errs,F_uvals,t); %F_sigma at time t first,
+            F_uvals(:,t) = compute_F_u(F_sigmas,gprimes,t); %followed by F_uvals at time t
             %then continue to work backwards in time, completing all
             %F_sigmas and F_uvals terms back to time 1
         end
