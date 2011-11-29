@@ -10,7 +10,7 @@ clear all
 % additional neurons are 4 through Nneurons
 
 %Tunable Parameters
-Nneurons = 3; %Number of neurons (3 + number of interneurons)
+Nneurons = 4; %Number of neurons (3 + number of interneurons)
 INIT_WEIGHT_MAG = 1.0; %Range (+/-) of initial synapse weights
 ETA = 0.01; %Learning rate
 ETASIG=0.01; %learning weight for adjusting initial conditions of interneurons--tune this
@@ -73,7 +73,7 @@ while niters>0
         %steps, backwards through time
         for t=T_time_steps:-1:1
             F_sigmas(:,t)= compute_F_o(W,errs,F_uvals,t); %F_sigma at time t first,
-            F_uvals(:,t)= compute_F_u(F_sigmas,gprimes,t); %followed by F_uvals at time t
+            F_uvals(:,t)= compute_F_u(F_sigmas,gprimes,t) %followed by F_uvals at time t
             %then continue to work backwards in time, completing all
             %F_sigmas and F_uvals terms back to time 1
         end
