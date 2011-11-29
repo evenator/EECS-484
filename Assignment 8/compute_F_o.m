@@ -20,6 +20,6 @@ end
 F_o_vec(1)=0; %don't change bias = neuron 1
 F_o_vec(2)=0; %don't change input = neuron 2
 %for output node, neuron 3, add in influences of partial deriv of errors w/rt sigmas at time t
-for i = Nneurons:-1:3
+for i = 3:Nneurons
     F_o_vec(i) = F_o_vec(i) + errs(t);
 end
