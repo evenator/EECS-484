@@ -1,5 +1,4 @@
-n_samples = 1000;
-over_sample = 2;
+function [ patterns, targets ] = load_training_bananas(n_samples, over_sample)
 
 %Load Ripe Bananas
 file_list = ls('input/ripe');
@@ -41,5 +40,4 @@ end
 over_ripe_targets = ones( over_sample*(list_length-2), 1) * [0 0 1];
 
 patterns = cat(1,ripe_data, under_ripe_data, over_ripe_data);
-[num_patterns ~] = size(patterns);
 targets = cat(1,ripe_targets, under_ripe_targets, over_ripe_targets);
