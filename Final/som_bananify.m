@@ -3,9 +3,9 @@ global r tau_r alpha0 tau_alpha;
 %Tunable Parameters
 num_bins = 5;
 training_time = 10000;
-r = .1; %Influence Radius
+r = .2; %Influence Radius
 tau_r = 100; %Influence Radius Decay Time Constant
-alpha0 = .75; %Influence at distance=0
+alpha0 = .9; %Influence at distance=0
 tau_alpha = 100; %Influence Decay Time Constant
 %End Tunable Parameters
 
