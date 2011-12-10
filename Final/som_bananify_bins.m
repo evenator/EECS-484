@@ -3,10 +3,10 @@ global r tau_r alpha0 tau_alpha;
 %Tunable Parameters
 num_bins = 5;
 training_time = 10000;
-r = .25; %Influence Radius
-tau_r = 200; %Influence Radius Decay Time Constant
-alpha0 = .05; %Influence at distance=0
-tau_alpha = 1000; %Influence Decay Time Constant
+r = .2; %Influence Radius
+tau_r = 100; %Influence Radius Decay Time Constant
+alpha0 = .9; %Influence at distance=0
+tau_alpha = 100; %Influence Decay Time Constant
 %End Tunable Parameters
 
 [n_pats pat_length] = size(patterns);
@@ -52,32 +52,12 @@ while (time<training_time)
     end
 end
 
-%Assign Training Patterns and Calculate Attribute Values
-bin_list = zeros(n_pats, 1);
-for i = 1:n_pats
-    bin_list(i) = som_find_closest_bin(patterns(i,:),bins);
-end
-
-bin_attributes = zeros(num_bins,1);
-bin_sd = zeros(num_bins,1);
-for i=1:num_bins
-    bin_members = bin_list==i;
-    if(sum(bin_members)>0)
-        bin_attributes(i) = mean(targets(bin_members,:),1);
-        bin_sd(i) = std(targets(bin_members,:),1);
-    end
-end
-bin_attributes
-bin_sd
-
-%Assign validation patterns to bins
+%Assign patterns to bins
 [num_validation_pats ~] = size(validation);
-bin_list_val = zeros(num_validation_pats, 1);
+bin_list = zeros(num_validation_pats, 1);
 for i = 1:num_validation_pats
-    bin_list_val(i) = som_find_closest_bin(validation(i,:),bins);
+    bin_list(i) = som_find_closest_bin(validation(i,:),bins);
 end
 
 %Debug results
-result_eval = bin_attributes(bin_list_val)-val_targets;
-disp('Bin; Target Value(1=r, 2=u, 3=o); Calculated Value');
-cat(2,bin_list_val,val_targets,bin_attributes(bin_list_val))
+cat(2,bin_list,val_targets)
